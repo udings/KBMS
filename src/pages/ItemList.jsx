@@ -1,0 +1,166 @@
+import { useState, useEffect } from "react";
+import axios from "axios";
+
+function ItemList() {
+  const [items, setItems] = useState([]);
+  const [editMode, setEditMode] = useState(false);
+  const [deleteMode, setDeleteMode] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [editedItem, setEditedItem] = useState({});
+
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        const res = await axios.get("http://localhost:5000/items");
+        setItems(res.data);
+      } catch (err) {
+        console.error("Gagal mengambil data barang:", err);
+      }
+    };
+
+    fetchItems();
+  }, []);
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Yakin ingin menghapus item ini?")) return;
+    try {
+      await axios.delete(`http://localhost:5000/items/${id}`);
+      setItems((prev) => prev.filter((item) => item._id !== id));
+    } catch (err) {
+      console.error("Gagal menghapus item:", err);
+    }
+  };
+
+  const handleEditClick = (item) => {
+    setEditingId(item._id);
+    setEditedItem({ ...item });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setEditedItem({});
+  };
+
+  const handleSaveEdit = async () => {
+    try {
+      const res = await axios.put(`http://localhost:5000/items/${editingId}`, editedItem);
+      setItems((prev) =>
+        prev.map((item) => (item._id === editingId ? res.data : item))
+      );
+      setEditingId(null);
+      setEditedItem({});
+    } catch (err) {
+      console.error("Gagal menyimpan perubahan:", err);
+    }
+  };
+
+  const handleChange = (e) => {
+    setEditedItem({ ...editedItem, [e.target.name]: e.target.value });
+  };
+
+  return (
+    <div className="p-6">
+      <div className="flex justify-between mb-4 flex-wrap gap-2">
+        <h1 className="text-xl font-bold text-blue-600">In Stock</h1>
+        <div className="space-x-2">
+          <button
+            onClick={() => (window.location.href = "/")}
+            className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+          >
+            Home
+          </button>
+          <button
+            onClick={() => (window.location.href = "/items/new")}
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          >
+            + New Stock
+          </button>
+          <button
+            onClick={() => {
+              setEditMode((prev) => !prev);
+              setDeleteMode(false);
+              setEditingId(null);
+            }}
+            className={`${editMode ? "bg-yellow-500" : "bg-yellow-400"} text-white px-4 py-2 rounded hover:bg-yellow-600`}
+          >
+            {editMode ? "Exit Edit Mode" : "Edit Mode"}
+          </button>
+          <button
+            onClick={() => {
+              setDeleteMode((prev) => !prev);
+              setEditMode(false);
+              setEditingId(null);
+            }}
+            className={`${deleteMode ? "bg-red-500" : "bg-red-400"} text-white px-4 py-2 rounded hover:bg-red-600`}
+          >
+            {deleteMode ? "Exit Delete Mode" : "Delete Mode"}
+          </button>
+        </div>
+      </div>
+
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white border border-gray-200 rounded shadow-sm">
+          <thead className="bg-blue-600 text-white">
+            <tr>
+              <th className="py-2 px-4 text-center">Aksi</th>
+              <th className="py-2 px-4 text-center">Nama Barang</th>
+              <th className="py-2 px-4 text-center">Kategori</th>
+              <th className="py-2 px-4 text-center">Lokasi</th>
+              <th className="py-2 px-4 text-center">Kondisi</th>
+              <th className="py-2 px-4 text-center">Kelayakan</th>
+              <th className="py-2 px-4 text-center">Jumlah Unit</th>
+              <th className="py-2 px-4 text-center">Penanggung Jawab</th>
+              <th className="py-2 px-4 text-center">Gambar</th>
+            </tr>
+          </thead>
+          <tbody>
+            {items.map((item) => (
+              <tr key={item._id}>
+                <td className="py-2 px-4 text-center">
+                  <div className="flex justify-center gap-2">
+                    {editMode && (
+                      <button
+                        onClick={() => handleEditClick(item)}
+                        className="bg-yellow-400 text-white px-2 py-1 rounded hover:bg-yellow-500"
+                      >
+                        Edit
+                      </button>
+                    )}
+                    {deleteMode && (
+                      <button
+                        onClick={() => handleDelete(item._id)}
+                        className="bg-red-400 text-white px-2 py-1 rounded hover:bg-red-500"
+                      >
+                        Delete
+                      </button>
+                    )}
+                  </div>
+                </td>
+                <td className="py-2 px-4">{item.nama_aset}</td>
+                <td className="py-2 px-4">{item.kategori}</td>
+                <td className="py-2 px-4">{item.lokasi}</td>
+                <td className="py-2 px-4">{item.kondisi}</td>
+                <td className="py-2 px-4">{item.kelayakan}</td>
+                <td className="py-2 px-4">{item.jumlah_unit}</td>
+                <td className="py-2 px-4">{item.penanggung_jawab}</td>
+                <td className="py-2 px-4 text-center">
+                  {item.image ? (
+                    <img
+                      src={item.image}
+                      alt={item.nama_aset}
+                      className="w-16 h-16 object-cover rounded-lg mx-auto"
+                    />
+                  ) : (
+                    <p>No Image</p>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+export default ItemList;
