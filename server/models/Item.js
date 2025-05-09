@@ -24,7 +24,7 @@ const itemSchema = new mongoose.Schema({
   jumlah_unit: {
     type: Number,
     required: true,
-    min: 1 // Tidak boleh 0 atau negatif
+    min: 1 
   },
   penanggung_jawab: { type: String, required: true },
   status: {
