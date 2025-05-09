@@ -43,7 +43,11 @@ function ItemList() {
 
   const handleSaveEdit = async () => {
     try {
-      const res = await axios.put(`http://localhost:5000/items/${editingId}`, editedItem);
+      const dataToSend = {
+        ...editedItem,
+        jumlah_unit: Number(editedItem.jumlah_unit),
+      };
+      const res = await axios.put(`http://localhost:5000/items/${editingId}`, dataToSend);
       setItems((prev) =>
         prev.map((item) => (item._id === editingId ? res.data : item))
       );
@@ -118,31 +122,58 @@ function ItemList() {
               <tr key={item._id}>
                 <td className="py-2 px-4 text-center">
                   <div className="flex justify-center gap-2">
-                    {editMode && (
-                      <button
-                        onClick={() => handleEditClick(item)}
-                        className="bg-yellow-400 text-white px-2 py-1 rounded hover:bg-yellow-500"
-                      >
-                        Edit
-                      </button>
-                    )}
-                    {deleteMode && (
-                      <button
-                        onClick={() => handleDelete(item._id)}
-                        className="bg-red-400 text-white px-2 py-1 rounded hover:bg-red-500"
-                      >
-                        Delete
-                      </button>
+                    {editingId === item._id ? (
+                      <>
+                        <button
+                          onClick={handleSaveEdit}
+                          className="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600"
+                        >
+                          Simpan
+                        </button>
+                        <button
+                          onClick={handleCancelEdit}
+                          className="bg-gray-400 text-white px-2 py-1 rounded hover:bg-gray-500"
+                        >
+                          Batal
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        {editMode && (
+                          <button
+                            onClick={() => handleEditClick(item)}
+                            className="bg-yellow-400 text-white px-2 py-1 rounded hover:bg-yellow-500"
+                          >
+                            Edit
+                          </button>
+                        )}
+                        {deleteMode && (
+                          <button
+                            onClick={() => handleDelete(item._id)}
+                            className="bg-red-400 text-white px-2 py-1 rounded hover:bg-red-500"
+                          >
+                            Delete
+                          </button>
+                        )}
+                      </>
                     )}
                   </div>
                 </td>
-                <td className="py-2 px-4">{item.nama_aset}</td>
-                <td className="py-2 px-4">{item.kategori}</td>
-                <td className="py-2 px-4">{item.lokasi}</td>
-                <td className="py-2 px-4">{item.kondisi}</td>
-                <td className="py-2 px-4">{item.kelayakan}</td>
-                <td className="py-2 px-4">{item.jumlah_unit}</td>
-                <td className="py-2 px-4">{item.penanggung_jawab}</td>
+                {["nama_aset", "kategori", "lokasi", "kondisi", "kelayakan", "jumlah_unit", "penanggung_jawab"].map((field) => (
+                  <td key={field} className="py-2 px-4">
+                    {editingId === item._id ? (
+                      <input
+                        type={field === "jumlah_unit" ? "number" : "text"}
+                        name={field}
+                        value={editedItem[field] || ""}
+                        onChange={handleChange}
+                        className="border px-2 py-1 w-full"
+                      />
+                    ) : (
+                      item[field]
+                    )}
+                  </td>
+                ))}
                 <td className="py-2 px-4 text-center">
                   {item.image ? (
                     <img

@@ -1,11 +1,15 @@
 import { useNavigate } from "react-router-dom";
+import backgroundImage from "../assets/background.jpg"; 
 
 function Home() {
   const navigate = useNavigate();
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="flex flex-col items-center gap-4">
+    <div
+      className="flex items-center justify-center min-h-screen bg-cover bg-center bg-fixed"
+      style={{ backgroundImage: `url(${backgroundImage})` }}
+    >
+      <div className="flex flex-col items-center gap-4 bg-white bg-opacity-80 p-6 rounded-xl shadow-md">
         <h1 className="text-2xl font-bold text-blue-600">Ini Tampilan Utama</h1>
         <button
           onClick={() => navigate("/items")}

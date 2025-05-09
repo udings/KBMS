@@ -6,7 +6,7 @@ function NewItem() {
   const [nama_aset, setNamaAset] = useState("");
   const [kategori, setKategori] = useState("");
   const [lokasi, setLokasi] = useState("");
-  const [status, setStatus] = useState("Pending");
+  const [status, setStatus] = useState("Disimpan");
   const [kondisi, setKondisi] = useState("Baik");
   const [kelayakan, setKelayakan] = useState("Layak");
   const [tahun_perolehan, setTahunPerolehan] = useState("");
@@ -24,11 +24,11 @@ function NewItem() {
     if (imageFile) {
       const data = new FormData();
       data.append("file", imageFile);
-      data.append("upload_preset", "unsigned_preset");
+      data.append("upload_preset", "unsigned_preset"); // Ganti jika preset kamu berbeda
 
       try {
         const cloudinaryRes = await axios.post(
-          "https://api.cloudinary.com/v1_1/dptgahuw9/image/upload", // Ganti dengan cloud name Anda
+          "https://api.cloudinary.com/v1_1/dptgahuw9/image/upload",
           data
         );
         imageUrl = cloudinaryRes.data.secure_url;
@@ -46,9 +46,9 @@ function NewItem() {
         status,
         kondisi,
         kelayakan,
-        tahun_perolehan,
+        tahun_perolehan: Number(tahun_perolehan),
         sumber_perolehan,
-        jumlah_unit,
+        jumlah_unit: Number(jumlah_unit),
         penanggung_jawab,
         keterangan,
         image: imageUrl,
@@ -121,9 +121,10 @@ function NewItem() {
             onChange={(e) => setStatus(e.target.value)}
             className="mt-1 p-2 w-full border border-gray-300 rounded"
           >
-            <option value="Pending">Disimpan</option>
-            <option value="Completed">Dipinjam</option>
-            <option value="In Progress">Dibuang</option>
+            <option value="Disimpan">Disimpan</option>
+            <option value="Dipinjam">Dipinjam</option>
+            <option value="Dibuang">Dibuang</option>
+            <option value="Hilang">Hilang</option>
           </select>
         </div>
         <div>
