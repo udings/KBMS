@@ -13,7 +13,7 @@ const itemSchema = new mongoose.Schema({
   sumber_perolehan: { type: String, required: true },
   kondisi: {
     type: String,
-    enum: ['Baik', 'Rusak Ringan', 'Rusak Berat'],
+    enum: ['Baik', 'Buruk', 'Rusak'],
     required: true
   },
   kelayakan: {
@@ -29,8 +29,8 @@ const itemSchema = new mongoose.Schema({
   penanggung_jawab: { type: String, required: true },
   status: {
     type: String,
-    enum: ['Aktif', 'Nonaktif', 'Pending', 'Selesai'],
-    default: 'Aktif'
+    enum: ['Disimpan', 'Dipinjam', 'Dibuanh', 'Hilang'],
+    default: 'Disimpan'
   },
   keterangan: { type: String },
   image: { type: String },
