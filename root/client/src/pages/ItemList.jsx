@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-const API = process.env.REACT_APP_API_URL;
+const API = process.env.REACT_APP_API_URL || "https://kbms-production.up.railway.app";
+console.log("✅ Loaded API URL:", API);
 
 function ItemList() {
   const [items, setItems] = useState([]);
@@ -9,20 +10,16 @@ function ItemList() {
   const [deleteMode, setDeleteMode] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [editedItem, setEditedItem] = useState({});
-
-  // Ambil token dari localStorage (bisa null jika belum login)
   const token = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        // Kirim header Authorization hanya jika token ada
         const headers = token ? { Authorization: `Bearer ${token}` } : {};
-
         const res = await axios.get(`${API}/items`, { headers });
         setItems(res.data);
       } catch (err) {
-        console.error("Gagal mengambil data barang:", err);
+        console.error("❌ Gagal mengambil data barang:", err);
         if (err.response && err.response.status === 401) {
           alert("Token tidak valid atau sesi telah berakhir. Silakan login ulang.");
         }
@@ -40,13 +37,11 @@ function ItemList() {
     }
     try {
       await axios.delete(`${API}/items/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
       setItems((prev) => prev.filter((item) => item._id !== id));
     } catch (err) {
-      console.error("Gagal menghapus item:", err);
+      console.error("❌ Gagal menghapus item:", err);
       if (err.response && err.response.status === 401) {
         alert("Token tidak valid atau sesi telah berakhir. Silakan login ulang.");
       }
@@ -74,9 +69,7 @@ function ItemList() {
         jumlah_unit: Number(editedItem.jumlah_unit),
       };
       const res = await axios.put(`${API}/items/${editingId}`, dataToSend, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
       setItems((prev) =>
         prev.map((item) => (item._id === editingId ? res.data : item))
@@ -84,7 +77,7 @@ function ItemList() {
       setEditingId(null);
       setEditedItem({});
     } catch (err) {
-      console.error("Gagal menyimpan perubahan:", err);
+      console.error("❌ Gagal menyimpan perubahan:", err);
       if (err.response && err.response.status === 401) {
         alert("Token tidak valid atau sesi telah berakhir. Silakan login ulang.");
       }
@@ -100,16 +93,10 @@ function ItemList() {
       <div className="flex justify-between mb-4 flex-wrap gap-2">
         <h1 className="text-xl font-bold text-blue-600">In Stock</h1>
         <div className="space-x-2">
-          <button
-            onClick={() => (window.location.href = "/")}
-            className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
-          >
+          <button onClick={() => (window.location.href = "/")} className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
             Home
           </button>
-          <button
-            onClick={() => (window.location.href = "/items/new")}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-          >
+          <button onClick={() => (window.location.href = "/items/new")} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
             + New Stock
           </button>
           <button
@@ -118,9 +105,7 @@ function ItemList() {
               setDeleteMode(false);
               setEditingId(null);
             }}
-            className={`${
-              editMode ? "bg-yellow-500" : "bg-yellow-400"
-            } text-white px-4 py-2 rounded hover:bg-yellow-600`}
+            className={`${editMode ? "bg-yellow-500" : "bg-yellow-400"} text-white px-4 py-2 rounded hover:bg-yellow-600`}
           >
             {editMode ? "Exit Edit Mode" : "Edit Mode"}
           </button>
@@ -130,9 +115,7 @@ function ItemList() {
               setEditMode(false);
               setEditingId(null);
             }}
-            className={`${
-              deleteMode ? "bg-red-500" : "bg-red-400"
-            } text-white px-4 py-2 rounded hover:bg-red-600`}
+            className={`${deleteMode ? "bg-red-500" : "bg-red-400"} text-white px-4 py-2 rounded hover:bg-red-600`}
           >
             {deleteMode ? "Exit Delete Mode" : "Delete Mode"}
           </button>
@@ -167,34 +150,22 @@ function ItemList() {
                   <div className="flex justify-center gap-2">
                     {editingId === item._id ? (
                       <>
-                        <button
-                          onClick={handleSaveEdit}
-                          className="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600"
-                        >
+                        <button onClick={handleSaveEdit} className="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600">
                           Simpan
                         </button>
-                        <button
-                          onClick={handleCancelEdit}
-                          className="bg-gray-400 text-white px-2 py-1 rounded hover:bg-gray-500"
-                        >
+                        <button onClick={handleCancelEdit} className="bg-gray-400 text-white px-2 py-1 rounded hover:bg-gray-500">
                           Batal
                         </button>
                       </>
                     ) : (
                       <>
                         {editMode && token && (
-                          <button
-                            onClick={() => handleEditClick(item)}
-                            className="bg-yellow-400 text-white px-2 py-1 rounded hover:bg-yellow-500"
-                          >
+                          <button onClick={() => handleEditClick(item)} className="bg-yellow-400 text-white px-2 py-1 rounded hover:bg-yellow-500">
                             Edit
                           </button>
                         )}
                         {deleteMode && token && (
-                          <button
-                            onClick={() => handleDelete(item._id)}
-                            className="bg-red-400 text-white px-2 py-1 rounded hover:bg-red-500"
-                          >
+                          <button onClick={() => handleDelete(item._id)} className="bg-red-400 text-white px-2 py-1 rounded hover:bg-red-500">
                             Delete
                           </button>
                         )}
