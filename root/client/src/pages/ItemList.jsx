@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
+const API = process.env.REACT_APP_API_URL;
+
 function ItemList() {
   const [items, setItems] = useState([]);
   const [editMode, setEditMode] = useState(false);
@@ -11,7 +13,7 @@ function ItemList() {
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/items");
+        const res = await axios.get(`${API}/items`);
         setItems(res.data);
       } catch (err) {
         console.error("Gagal mengambil data barang:", err);
@@ -24,7 +26,7 @@ function ItemList() {
   const handleDelete = async (id) => {
     if (!window.confirm("Yakin ingin menghapus item ini?")) return;
     try {
-      await axios.delete(`http://localhost:5000/items/${id}`);
+      await axios.delete(`${API}/items/${id}`);
       setItems((prev) => prev.filter((item) => item._id !== id));
     } catch (err) {
       console.error("Gagal menghapus item:", err);
@@ -47,7 +49,7 @@ function ItemList() {
         ...editedItem,
         jumlah_unit: Number(editedItem.jumlah_unit),
       };
-      const res = await axios.put(`http://localhost:5000/items/${editingId}`, dataToSend);
+      const res = await axios.put(`${API}/items/${editingId}`, dataToSend);
       setItems((prev) =>
         prev.map((item) => (item._id === editingId ? res.data : item))
       );
@@ -85,7 +87,9 @@ function ItemList() {
               setDeleteMode(false);
               setEditingId(null);
             }}
-            className={`${editMode ? "bg-yellow-500" : "bg-yellow-400"} text-white px-4 py-2 rounded hover:bg-yellow-600`}
+            className={`${
+              editMode ? "bg-yellow-500" : "bg-yellow-400"
+            } text-white px-4 py-2 rounded hover:bg-yellow-600`}
           >
             {editMode ? "Exit Edit Mode" : "Edit Mode"}
           </button>
@@ -95,7 +99,9 @@ function ItemList() {
               setEditMode(false);
               setEditingId(null);
             }}
-            className={`${deleteMode ? "bg-red-500" : "bg-red-400"} text-white px-4 py-2 rounded hover:bg-red-600`}
+            className={`${
+              deleteMode ? "bg-red-500" : "bg-red-400"
+            } text-white px-4 py-2 rounded hover:bg-red-600`}
           >
             {deleteMode ? "Exit Delete Mode" : "Delete Mode"}
           </button>
@@ -159,7 +165,15 @@ function ItemList() {
                     )}
                   </div>
                 </td>
-                {["nama_aset", "kategori", "lokasi", "kondisi", "kelayakan", "jumlah_unit", "penanggung_jawab"].map((field) => (
+                {[
+                  "nama_aset",
+                  "kategori",
+                  "lokasi",
+                  "kondisi",
+                  "kelayakan",
+                  "jumlah_unit",
+                  "penanggung_jawab",
+                ].map((field) => (
                   <td key={field} className="py-2 px-4">
                     {editingId === item._id ? (
                       <input
