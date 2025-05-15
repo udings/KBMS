@@ -7,13 +7,13 @@ const Item = require("./models/Item");
 
 const app = express();
 
-// Middleware
+// ===== Middleware =====
 app.use(cors({
   origin: "https://kbms-chi.vercel.app"
 }));
 app.use(express.json());
 
-// Middleware untuk verifikasi token JWT
+// ===== JWT Authentication Middleware =====
 function verifyToken(req, res, next) {
   const authHeader = req.headers.authorization;
   if (!authHeader) return res.status(401).json({ message: "Token tidak ditemukan" });
@@ -23,19 +23,21 @@ function verifyToken(req, res, next) {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;  // data user dari token
+    req.user = decoded;
     next();
   } catch (error) {
     return res.status(403).json({ message: "Token tidak valid" });
   }
 }
 
-// Koneksi MongoDB
+// ===== MongoDB Connection =====
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB Connected"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 
-// Create (Tambah Item) - butuh token
+// ===== Routes =====
+
+// ➕ Create Item (Authenticated)
 app.post("/items", verifyToken, async (req, res) => {
   const {
     nama_aset,
@@ -63,9 +65,9 @@ app.post("/items", verifyToken, async (req, res) => {
       kelayakan,
       jumlah_unit,
       penanggung_jawab,
-      status,      // optional, default: "Aktif"
-      keterangan,  // optional
-      image        // optional
+      status,
+      keterangan,
+      image
     });
 
     await newItem.save();
@@ -76,7 +78,7 @@ app.post("/items", verifyToken, async (req, res) => {
   }
 });
 
-// Read (Ambil semua item) - bebas akses
+// 📄 Get All Items (Public)
 app.get("/items", async (req, res) => {
   try {
     const items = await Item.find();
@@ -86,7 +88,7 @@ app.get("/items", async (req, res) => {
   }
 });
 
-// Update (Perbarui item) - butuh token
+// ✏️ Update Item (Authenticated)
 app.put("/items/:id", verifyToken, async (req, res) => {
   try {
     const updatedItem = await Item.findByIdAndUpdate(
@@ -103,7 +105,7 @@ app.put("/items/:id", verifyToken, async (req, res) => {
   }
 });
 
-// Delete (Hapus item) - butuh token
+// 🗑️ Delete Item (Authenticated)
 app.delete("/items/:id", verifyToken, async (req, res) => {
   try {
     const deletedItem = await Item.findByIdAndDelete(req.params.id);
@@ -116,14 +118,14 @@ app.delete("/items/:id", verifyToken, async (req, res) => {
   }
 });
 
-// Route auth (login, register) - bebas akses
+// 🔐 Auth Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 
-// Endpoint dasar
+// 🏠 Root Endpoint
 app.get("/", (req, res) => {
   res.send("Backend Inventaris aktif ✅");
 });
 
-// Jalankan server
+// ===== Start Server =====
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server berjalan di port ${PORT}`));
