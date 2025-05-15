@@ -10,21 +10,16 @@ function ItemList() {
   const [editingId, setEditingId] = useState(null);
   const [editedItem, setEditedItem] = useState({});
 
-  // Ambil token dari localStorage (pastikan sudah login dan token tersimpan)
+  // Ambil token dari localStorage (bisa null jika belum login)
   const token = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchItems = async () => {
-      if (!token) {
-        alert("Anda harus login dulu untuk melihat data.");
-        return;
-      }
       try {
-        const res = await axios.get(`${API}/items`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        // Kirim header Authorization hanya jika token ada
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+        const res = await axios.get(`${API}/items`, { headers });
         setItems(res.data);
       } catch (err) {
         console.error("Gagal mengambil data barang:", err);
@@ -144,6 +139,12 @@ function ItemList() {
         </div>
       </div>
 
+      {!token && (
+        <p className="mb-4 text-red-600">
+          Anda belum login, fitur edit dan hapus tidak tersedia.
+        </p>
+      )}
+
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-200 rounded shadow-sm">
           <thead className="bg-blue-600 text-white">
@@ -181,7 +182,7 @@ function ItemList() {
                       </>
                     ) : (
                       <>
-                        {editMode && (
+                        {editMode && token && (
                           <button
                             onClick={() => handleEditClick(item)}
                             className="bg-yellow-400 text-white px-2 py-1 rounded hover:bg-yellow-500"
@@ -189,7 +190,7 @@ function ItemList() {
                             Edit
                           </button>
                         )}
-                        {deleteMode && (
+                        {deleteMode && token && (
                           <button
                             onClick={() => handleDelete(item._id)}
                             className="bg-red-400 text-white px-2 py-1 rounded hover:bg-red-500"
