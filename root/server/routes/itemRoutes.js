@@ -1,60 +1,42 @@
-// server/routes/itemRoutes.js
 const express = require("express");
 const router = express.Router();
-const Item = require("../models/Item");
 
-// CREATE Item
-router.post("/", async (req, res) => {
-  try {
-    const newItem = new Item(req.body);
-    await newItem.save();
-    res.status(201).json(newItem);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-});
+// Import controller functions
+const {
+  createItem,
+  getAllItems,
+  getItemById,
+  updateItem,
+  deleteItem
+} = require("../controllers/itemController");
 
-// READ all Items
-router.get("/", async (req, res) => {
-  try {
-    const items = await Item.find();
-    res.json(items);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+// Import middleware untuk autentikasi dan otorisasi
+const authenticate = require("../middleware/auth");
+const authorizeRoles = require("../middleware/roleCheck");
 
-// READ Item by ID
-router.get("/:id", async (req, res) => {
-  try {
-    const item = await Item.findById(req.params.id);
-    if (!item) return res.status(404).json({ message: "Item tidak ditemukan" });
-    res.json(item);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+// ------------------------
+// ✅ PUBLIC: READ ALL ITEMS
+// ------------------------
+router.get("/", getAllItems);
 
-// UPDATE Item
-router.put("/:id", async (req, res) => {
-  try {
-    const updated = await Item.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    res.json(updated);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-});
+// ------------------------
+// ✅ PUBLIC: READ ITEM BY ID
+// ------------------------
+router.get("/:id", getItemById);
 
-// DELETE Item
-router.delete("/:id", async (req, res) => {
-  try {
-    await Item.findByIdAndDelete(req.params.id);
-    res.json({ message: "Item berhasil dihapus" });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+// ------------------------
+// 🔐 PROTECTED: CREATE ITEM (developer only)
+// ------------------------
+router.post("/", authenticate, authorizeRoles("developer"), createItem);
 
+// ------------------------
+// 🔐 PROTECTED: UPDATE ITEM (developer or manager)
+// ------------------------
+router.put("/:id", authenticate, authorizeRoles("developer", "manager"), updateItem);
 
+// ------------------------
+// 🔐 PROTECTED: DELETE ITEM (developer only)
+// ------------------------
+router.delete("/:id", authenticate, authorizeRoles("developer"), deleteItem);
 
 module.exports = router;

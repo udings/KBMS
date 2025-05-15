@@ -10,26 +10,51 @@ function ItemList() {
   const [editingId, setEditingId] = useState(null);
   const [editedItem, setEditedItem] = useState({});
 
+  // Ambil token dari localStorage (pastikan sudah login dan token tersimpan)
+  const token = localStorage.getItem("token");
+
   useEffect(() => {
     const fetchItems = async () => {
+      if (!token) {
+        alert("Anda harus login dulu untuk melihat data.");
+        return;
+      }
       try {
-        const res = await axios.get(`${API}/items`);
+        const res = await axios.get(`${API}/items`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setItems(res.data);
       } catch (err) {
         console.error("Gagal mengambil data barang:", err);
+        if (err.response && err.response.status === 401) {
+          alert("Token tidak valid atau sesi telah berakhir. Silakan login ulang.");
+        }
       }
     };
 
     fetchItems();
-  }, []);
+  }, [token]);
 
   const handleDelete = async (id) => {
     if (!window.confirm("Yakin ingin menghapus item ini?")) return;
+    if (!token) {
+      alert("Anda harus login dulu untuk menghapus item.");
+      return;
+    }
     try {
-      await axios.delete(`${API}/items/${id}`);
+      await axios.delete(`${API}/items/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setItems((prev) => prev.filter((item) => item._id !== id));
     } catch (err) {
       console.error("Gagal menghapus item:", err);
+      if (err.response && err.response.status === 401) {
+        alert("Token tidak valid atau sesi telah berakhir. Silakan login ulang.");
+      }
     }
   };
 
@@ -44,12 +69,20 @@ function ItemList() {
   };
 
   const handleSaveEdit = async () => {
+    if (!token) {
+      alert("Anda harus login dulu untuk mengedit item.");
+      return;
+    }
     try {
       const dataToSend = {
         ...editedItem,
         jumlah_unit: Number(editedItem.jumlah_unit),
       };
-      const res = await axios.put(`${API}/items/${editingId}`, dataToSend);
+      const res = await axios.put(`${API}/items/${editingId}`, dataToSend, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setItems((prev) =>
         prev.map((item) => (item._id === editingId ? res.data : item))
       );
@@ -57,6 +90,9 @@ function ItemList() {
       setEditedItem({});
     } catch (err) {
       console.error("Gagal menyimpan perubahan:", err);
+      if (err.response && err.response.status === 401) {
+        alert("Token tidak valid atau sesi telah berakhir. Silakan login ulang.");
+      }
     }
   };
 

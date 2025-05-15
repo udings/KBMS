@@ -53,4 +53,10 @@ exports.updateItem = async (req, res) => {
 // DELETE item
 exports.deleteItem = async (req, res) => {
   try {
-    await Item.findById
+    const item = await Item.findByIdAndDelete(req.params.id);
+    if (!item) return res.status(404).json({ message: "Item tidak ditemukan" });
+    res.json({ message: "Item berhasil dihapus" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
