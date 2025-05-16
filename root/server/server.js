@@ -6,27 +6,41 @@ const jwt = require("jsonwebtoken");
 const Item = require("./models/Item");
 
 const app = express();
-app.use(express.json()); // Penting untuk parsing JSON dari body request
+app.use(express.json()); // Untuk parsing JSON
 
-// ===== Middleware =====
+// ======= Allowed Origins (frontend yang diizinkan) =======
 const allowedOrigins = [
   "https://kbms-chi.vercel.app",
   "https://inventaris-hksyoy0d5-udinss-projects.vercel.app",
-  "https://kbms-53oqofyqm-udinss-projects.vercel.app" // tambahkan https:// !!!
+  "https://kbms-53oqofyqm-udinss-projects.vercel.app"
 ];
 
+// ======= CORS Middleware =======
 app.use(cors({
   origin: function (origin, callback) {
+    console.log("🔍 Incoming Origin:", origin);
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error("CORS not allowed for this origin"));
+      callback(new Error("CORS not allowed for this origin: " + origin));
     }
-  }
+  },
+  credentials: true
 }));
 
+// ======= Tambahan header CORS manual untuk Railway =======
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.header("Access-Control-Allow-Origin", origin);
+  }
+  res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+  res.header("Access-Control-Allow-Credentials", "true");
+  next();
+});
 
-// ===== JWT Authentication Middleware =====
+// ======= JWT Auth Middleware =======
 function verifyToken(req, res, next) {
   const authHeader = req.headers.authorization;
   if (!authHeader) return res.status(401).json({ message: "Token tidak ditemukan" });
@@ -43,14 +57,14 @@ function verifyToken(req, res, next) {
   }
 }
 
-// ===== MongoDB Connection =====
+// ======= MongoDB Connection =======
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB Connected"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 
-// ===== Routes =====
+// ======= Routes =======
 
-// ➕ Create Item (Authenticated)
+// ➕ Create Item
 app.post("/items", verifyToken, async (req, res) => {
   const {
     nama_aset,
@@ -86,12 +100,12 @@ app.post("/items", verifyToken, async (req, res) => {
     await newItem.save();
     res.status(201).json(newItem);
   } catch (error) {
-    console.error("Error adding item:", error);
+    console.error("❌ Error adding item:", error);
     res.status(500).json({ message: "Failed to add item", error });
   }
 });
 
-// 📄 Get All Items (Public)
+// 📄 Get All Items
 app.get("/items", async (req, res) => {
   try {
     const items = await Item.find();
@@ -101,7 +115,7 @@ app.get("/items", async (req, res) => {
   }
 });
 
-// ✏️ Update Item (Authenticated)
+// ✏️ Update Item
 app.put("/items/:id", verifyToken, async (req, res) => {
   try {
     const updatedItem = await Item.findByIdAndUpdate(
@@ -118,7 +132,7 @@ app.put("/items/:id", verifyToken, async (req, res) => {
   }
 });
 
-// 🗑️ Delete Item (Authenticated)
+// 🗑️ Delete Item
 app.delete("/items/:id", verifyToken, async (req, res) => {
   try {
     const deletedItem = await Item.findByIdAndDelete(req.params.id);
@@ -132,13 +146,13 @@ app.delete("/items/:id", verifyToken, async (req, res) => {
 });
 
 // 🔐 Auth Routes
-app.use('/api/auth', require('./routes/authRoutes'));
+app.use("/api/auth", require("./routes/authRoutes"));
 
 // 🏠 Root Endpoint
 app.get("/", (req, res) => {
-  res.send("Backend Inventaris aktif ✅");
+  res.send("✅ Backend Inventaris aktif");
 });
 
-// ===== Start Server =====
+// ======= Start Server =======
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server berjalan di port ${PORT}`));
