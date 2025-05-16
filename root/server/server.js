@@ -8,10 +8,20 @@ const Item = require("./models/Item");
 const app = express();
 
 // ===== Middleware =====
+const allowedOrigins = [
+  "https://kbms-chi.vercel.app",
+  "https://inventaris-hksyoy0d5-udinss-projects.vercel.app"
+];
+
 app.use(cors({
-  origin: "https://kbms-chi.vercel.app"
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("CORS not allowed for this origin"));
+    }
+  }
 }));
-app.use(express.json());
 
 // ===== JWT Authentication Middleware =====
 function verifyToken(req, res, next) {
