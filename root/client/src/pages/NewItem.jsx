@@ -48,7 +48,7 @@ function NewItem() {
 
     try {
       await axios.post(
-        "http://localhost:5000/items",
+      "https://kbms-production.up.railway.app/items",
         {
           nama_aset,
           kategori,
