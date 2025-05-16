@@ -12,8 +12,8 @@ app.use(express.json()); // Penting untuk parsing JSON dari body request
 const allowedOrigins = [
   "https://kbms-chi.vercel.app",
   "https://inventaris-hksyoy0d5-udinss-projects.vercel.app",
-  "https://kbms-53oqofyqm-udinss-projects.vercel.app",
-
+  "https://kbms-53oqofyqm-udinss-projects.vercel.app" // tambahkan https:// !!!
+];
 
 app.use(cors({
   origin: function (origin, callback) {
@@ -24,6 +24,7 @@ app.use(cors({
     }
   }
 }));
+
 
 // ===== JWT Authentication Middleware =====
 function verifyToken(req, res, next) {
