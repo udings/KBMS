@@ -12,9 +12,8 @@ app.use(express.json()); // Penting untuk parsing JSON dari body request
 const allowedOrigins = [
   "https://kbms-chi.vercel.app",
   "https://inventaris-hksyoy0d5-udinss-projects.vercel.app",
-  "https://kbms-cjia3qhwf-udinss-projects.vercel.app",
-  "https://kbms-jul6qk9cx-udinss-projects.vercel.app" // ✅ Tambahan domain frontend terbaru
-];
+  "kbms-53oqofyqm-udinss-projects.vercel.app",
+
 
 app.use(cors({
   origin: function (origin, callback) {
