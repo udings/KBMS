@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function NewItem() {
+  console.log("🔥 NewItem terbaru dimuat");
   const [nama_aset, setNamaAset] = useState("");
   const [kategori, setKategori] = useState("");
   const [lokasi, setLokasi] = useState("");
