@@ -10,7 +10,8 @@ const app = express();
 // ===== Middleware =====
 const allowedOrigins = [
   "https://kbms-chi.vercel.app",
-  "https://inventaris-hksyoy0d5-udinss-projects.vercel.app"
+  "https://inventaris-hksyoy0d5-udinss-projects.vercel.app",
+  "https://kbms-cjia3qhwf-udinss-projects.vercel.app" // <-- Tambahkan ini
 ];
 
 app.use(cors({
