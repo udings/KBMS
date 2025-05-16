@@ -1,5 +1,4 @@
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 
 exports.login = async (req, res) => {
@@ -10,8 +9,8 @@ exports.login = async (req, res) => {
       return res.status(401).json({ message: "User tidak ditemukan" });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
+    // Bandingkan password langsung (plaintext)
+    if (password !== user.password) {
       return res.status(401).json({ message: "Password salah" });
     }
 
@@ -36,11 +35,10 @@ exports.register = async (req, res) => {
       return res.status(400).json({ message: "Username sudah digunakan" });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-
+    // Simpan password langsung tanpa hashing
     const newUser = new User({
       username,
-      password: hashedPassword,
+      password, // langsung simpan
       role: role || "user"
     });
 
