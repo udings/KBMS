@@ -1,17 +1,39 @@
 const jwt = require('jsonwebtoken');
 
-const authenticate = (req, res, next) => {
+// Middleware untuk validasi token JWT dan menambahkan user ke req.user
+const authenticateToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
-  const token = authHeader && authHeader.split(' ')[1];
+  const token = authHeader && authHeader.split(' ')[1]; // Bearer <token>
   if (!token) return res.status(401).json({ message: 'Login required' });
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // berisi { id, username, role }
+    req.user = decoded; // { id, username, role }
     next();
   } catch (err) {
-    return res.status(403).json({ message: 'Invalid token' });
+    return res.status(403).json({ message: 'Invalid or expired token' });
   }
 };
 
-module.exports = authenticate;
+// Middleware untuk cek role yang diizinkan, menerima array role
+const authorizeRole = (roles = []) => {
+  // Jika hanya 1 role string, ubah jadi array
+  if (typeof roles === 'string') {
+    roles = [roles];
+  }
+  
+  return (req, res, next) => {
+    if (!req.user) {
+      return res.status(401).json({ message: 'Login required' });
+    }
+    if (!roles.includes(req.user.role)) {
+      return res.status(403).json({ message: 'Access denied: insufficient role' });
+    }
+    next();
+  };
+};
+
+module.exports = {
+  authenticateToken,
+  authorizeRole,
+};
