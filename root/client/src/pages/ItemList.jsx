@@ -92,7 +92,7 @@ function ItemList() {
     <div className="p-6">
       <div className="flex justify-between mb-4 flex-wrap gap-2">
         <h1 className="text-xl font-bold text-blue-600">In Stock</h1>
-        <div className="space-x-2">
+        <div className="space-x-2 flex flex-wrap">
           <button onClick={() => (window.location.href = "/")} className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
             Home
           </button>
@@ -119,6 +119,24 @@ function ItemList() {
           >
             {deleteMode ? "Exit Delete Mode" : "Delete Mode"}
           </button>
+          {token ? (
+            <button
+              onClick={() => {
+                localStorage.removeItem("token");
+                window.location.reload();
+              }}
+              className="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-800"
+            >
+              Logout
+            </button>
+          ) : (
+            <button
+              onClick={() => (window.location.href = "/login")}
+              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+            >
+              Login
+            </button>
+          )}
         </div>
       </div>
 
