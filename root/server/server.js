@@ -6,12 +6,14 @@ const jwt = require("jsonwebtoken");
 const Item = require("./models/Item");
 
 const app = express();
+app.use(express.json()); // Penting untuk parsing JSON dari body request
 
 // ===== Middleware =====
 const allowedOrigins = [
   "https://kbms-chi.vercel.app",
   "https://inventaris-hksyoy0d5-udinss-projects.vercel.app",
-  "https://kbms-cjia3qhwf-udinss-projects.vercel.app" // <-- Tambahkan ini
+  "https://kbms-cjia3qhwf-udinss-projects.vercel.app",
+  "https://kbms-jul6qk9cx-udinss-projects.vercel.app" // ✅ Tambahan domain frontend terbaru
 ];
 
 app.use(cors({
