@@ -8,16 +8,22 @@ function Login() {
   const [password, setPassword] = useState("");
 
   const handleLogin = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await axios.post(`${API}/api/auth/login`, { username, password });
-      localStorage.setItem("token", res.data.token);
-      alert("Login berhasil!");
-      window.location.href = "/items"; // arahkan ke halaman yang sesuai
-    } catch (err) {
-      alert("Login gagal. Periksa username dan password.");
-    }
-  };
+  e.preventDefault();
+  try {
+    const res = await axios.post(`${API}/api/auth/login`, { username, password });
+
+    // Simpan token dan data user ke localStorage
+    localStorage.setItem("token", res.data.token);
+    localStorage.setItem("username", res.data.username);
+    localStorage.setItem("role", res.data.role); // ⬅️ Tambahkan ini!
+
+    alert("Login berhasil!");
+    window.location.href = "/items"; // atau gunakan navigate jika pakai React Router
+  } catch (err) {
+    alert("Login gagal. Periksa username dan password.");
+  }
+};
+
 
   return (
     <div className="p-6 max-w-md mx-auto">

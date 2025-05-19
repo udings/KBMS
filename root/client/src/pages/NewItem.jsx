@@ -26,6 +26,16 @@ function NewItem() {
     }
   }, [navigate]);
 
+  useEffect(() => {
+  const token = localStorage.getItem("token");
+  const userRole = localStorage.getItem("role");
+
+  if (!token || userRole !== "developer") {
+    alert("Anda tidak memiliki akses untuk menambahkan item.");
+    navigate("/not-authorized");
+  }
+}, [navigate]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
