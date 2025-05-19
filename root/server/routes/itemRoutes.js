@@ -11,8 +11,7 @@ const {
 } = require("../controllers/itemController");
 
 // Import middleware untuk autentikasi dan otorisasi
-const authenticate = require("../middleware/auth");
-const authorizeRoles = require("../middleware/roleCheck");
+const { authenticateToken, authorizeRole } = require("../middleware/auth");
 
 // ------------------------
 // ✅ PUBLIC: READ ALL ITEMS
@@ -27,16 +26,16 @@ router.get("/:id", getItemById);
 // ------------------------
 // 🔐 PROTECTED: CREATE ITEM (developer only)
 // ------------------------
-router.post("/", authenticate, authorizeRoles("developer"), createItem);
+router.post("/", authenticateToken, authorizeRole("developer"), createItem);
 
 // ------------------------
 // 🔐 PROTECTED: UPDATE ITEM (developer or manager)
 // ------------------------
-router.put("/:id", authenticate, authorizeRoles("developer", "manager"), updateItem);
+router.put("/:id", authenticateToken, authorizeRole(["developer", "manager"]), updateItem);
 
 // ------------------------
 // 🔐 PROTECTED: DELETE ITEM (developer only)
 // ------------------------
-router.delete("/:id", authenticate, authorizeRoles("developer"), deleteItem);
+router.delete("/:id", authenticateToken, authorizeRole("developer"), deleteItem);
 
 module.exports = router;
