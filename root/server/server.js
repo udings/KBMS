@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express");
+const authRoutes = require("./routes/authRoutes");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
@@ -7,6 +8,7 @@ const Item = require("./models/Item");
 
 const app = express();
 app.use(express.json()); // Untuk parsing JSON
+app.use("/auth", authRoutes);
 
 // ======= Allowed Origins (frontend yang diizinkan) =======
 const allowedOrigins = [
@@ -14,6 +16,7 @@ const allowedOrigins = [
   "https://inventaris-hksyoy0d5-udinss-projects.vercel.app",
   "https://kbms-53oqofyqm-udinss-projects.vercel.app"
 ];
+
 
 // ======= CORS Middleware =======
 app.use(cors({
