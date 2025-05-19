@@ -5,7 +5,7 @@ const cors = require("cors");
 const jwt = require("jsonwebtoken");
 
 const authRoutes = require("./routes/authRoutes");
-const itemRoutes = require("./routes/itemRoutes"); // ✅ Gunakan route yang benar
+const itemRoutes = require("./routes/itemRoutes"); 
 const app = express();
 
 // ======= Middleware JSON Parser =======
@@ -15,7 +15,6 @@ app.use(express.json());
 const allowedOrigins = [
   "https://kbms-chi.vercel.app",
   "https://inventaris-hksyoy0d5-udinss-projects.vercel.app",
-  "https://kbms-53oqofyqm-udinss-projects.vercel.app"
 ];
 
 // ======= CORS Middleware =======
