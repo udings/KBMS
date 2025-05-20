@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const itemController = require("../controllers/itemController");
+const { authenticateToken, authorizeRole } = require("../middleware/auth");
 
 // Import controller functions
 const {
@@ -26,7 +28,7 @@ router.get("/:id", getItemById);
 // ------------------------
 // 🔐 PROTECTED: CREATE ITEM (developer only)
 // ------------------------
-router.post("/", authenticateToken, authorizeRole("developer"), createItem);
+router.post("/", authenticateToken, authorizeRole(["developer"]), itemController.createItem);
 
 // ------------------------
 // 🔐 PROTECTED: UPDATE ITEM (developer or manager)
