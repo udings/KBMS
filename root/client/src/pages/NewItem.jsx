@@ -18,13 +18,7 @@ function NewItem() {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const userRole = localStorage.getItem("role");
-    if (userRole !== "developer") {
-      alert("Anda tidak memiliki akses untuk menambahkan item.");
-      navigate("/not-authorized");
-    }
-  }, [navigate]);
+
 
   useEffect(() => {
   const token = localStorage.getItem("token");
@@ -80,7 +74,15 @@ function NewItem() {
     };
 
     try {
-      await axios.post("https://kbms-production.up.railway.app/items", payload);
+      const token = localStorage.getItem("token");
+
+await axios.post("https://kbms-production.up.railway.app/items", payload, {
+  headers: {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json",
+  },
+});
+
       alert("Item berhasil ditambahkan.");
       navigate("/items");
     } catch (error) {
