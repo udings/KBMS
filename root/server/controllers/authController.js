@@ -9,12 +9,13 @@ exports.login = async (req, res) => {
       return res.status(401).json({ message: "User tidak ditemukan" });
     }
 
-    // Bandingkan password langsung (plaintext)
+
     if (password !== user.password) {
       return res.status(401).json({ message: "Password salah" });
     }
 
     const token = jwt.sign(
+
       { id: user._id, username: user.username, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
