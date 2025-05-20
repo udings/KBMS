@@ -93,51 +93,58 @@ function ItemList() {
       <div className="flex justify-between mb-4 flex-wrap gap-2">
         <h1 className="text-xl font-bold text-blue-600">In Stock</h1>
         <div className="space-x-2 flex flex-wrap">
-          <button onClick={() => (window.location.href = "/")} className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
-            Home
-          </button>
-          <button onClick={() => (window.location.href = "/items/new")} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-            + New Stock
-          </button>
-          <button
-            onClick={() => {
-              setEditMode((prev) => !prev);
-              setDeleteMode(false);
-              setEditingId(null);
-            }}
-            className={`${editMode ? "bg-yellow-500" : "bg-yellow-400"} text-white px-4 py-2 rounded hover:bg-yellow-600`}
-          >
-            {editMode ? "Exit Edit Mode" : "Edit Mode"}
-          </button>
-          <button
-            onClick={() => {
-              setDeleteMode((prev) => !prev);
-              setEditMode(false);
-              setEditingId(null);
-            }}
-            className={`${deleteMode ? "bg-red-500" : "bg-red-400"} text-white px-4 py-2 rounded hover:bg-red-600`}
-          >
-            {deleteMode ? "Exit Delete Mode" : "Delete Mode"}
-          </button>
-          {token ? (
-            <button
-              onClick={() => {
-                localStorage.removeItem("token");
-                window.location.reload();
-              }}
-              className="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-800"
-            >
-              Logout
-            </button>
-          ) : (
-            <button
-              onClick={() => (window.location.href = "/login")}
-              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-            >
-              Login
-            </button>
-          )}
-        </div>
+  <button onClick={() => (window.location.href = "/")} className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+    Home
+  </button>
+
+  {token && (
+    <>
+      <button onClick={() => (window.location.href = "/items/new")} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        New Stock
+      </button>
+      <button
+        onClick={() => {
+          setEditMode((prev) => !prev);
+          setDeleteMode(false);
+          setEditingId(null);
+        }}
+        className={`${editMode ? "bg-yellow-500" : "bg-yellow-400"} text-white px-4 py-2 rounded hover:bg-yellow-600`}
+      >
+        {editMode ? "Exit Edit Mode" : "Edit Mode"}
+      </button>
+      <button
+        onClick={() => {
+          setDeleteMode((prev) => !prev);
+          setEditMode(false);
+          setEditingId(null);
+        }}
+        className={`${deleteMode ? "bg-red-500" : "bg-red-400"} text-white px-4 py-2 rounded hover:bg-red-600`}
+      >
+        {deleteMode ? "Exit Delete Mode" : "Delete Mode"}
+      </button>
+    </>
+  )}
+
+  {token ? (
+    <button
+      onClick={() => {
+        localStorage.removeItem("token");
+        window.location.reload();
+      }}
+      className="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-800"
+    >
+      Logout
+    </button>
+  ) : (
+    <button
+      onClick={() => (window.location.href = "/login")}
+      className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+    >
+      Login
+    </button>
+  )}
+</div>
+
       </div>
 
       {!token && (
