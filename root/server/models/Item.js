@@ -29,7 +29,7 @@
     penanggung_jawab: { type: String, required: true },
     status: {
       type: String,
-      enum: ['Disimpan', 'Dipinjam', 'Dibuanh', 'Hilang'],
+      enum: ['Digunakan', 'Disimpan', 'Dipinjam', 'Hilang'],
       default: 'Disimpan'
     },
     keterangan: { type: String },

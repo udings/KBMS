@@ -118,8 +118,10 @@ await axios.post("https://kbms-production.up.railway.app/items", payload, {
         <div>
           <label className="block text-sm font-medium">Status</label>
           <select value={status} onChange={(e) => setStatus(e.target.value)} className="w-full border p-2 rounded">
+            <option value="Digunakan">Digunakan</option>
             <option value="Disimpan">Disimpan</option>
             <option value="Dipinjam">Dipinjam</option>
+            <option value="Hilang">Hilang</option>
           </select>
         </div>
 
@@ -127,6 +129,7 @@ await axios.post("https://kbms-production.up.railway.app/items", payload, {
           <label className="block text-sm font-medium">Kondisi</label>
           <select value={kondisi} onChange={(e) => setKondisi(e.target.value)} className="w-full border p-2 rounded">
             <option value="Baik">Baik</option>
+            <option value="Buruk">Buruk</option>
             <option value="Rusak">Rusak</option>
           </select>
         </div>
