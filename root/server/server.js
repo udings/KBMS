@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const Item = require("./models/Item");
+const authorizeRoles = require("./middleware/roleCheck");
 
 const app = express();
 app.use(express.json()); // Untuk parsing JSON
@@ -134,7 +135,7 @@ app.put("/items/:id", verifyToken, async (req, res) => {
 });
 
 // 🗑️ Delete Item
-app.delete("/items/:id", verifyToken, async (req, res) => {
+app.delete("/items/:id", verifyToken, authorizeRoles("developer"), async (req, res) => {
   try {
     const deletedItem = await Item.findByIdAndDelete(req.params.id);
     if (!deletedItem) {
