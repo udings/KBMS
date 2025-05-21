@@ -10,6 +10,10 @@ function ItemList() {
   const [deleteMode, setDeleteMode] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [editedItem, setEditedItem] = useState({});
+  const opsiPenanggungJawab = [...new Set(items.map((item) => item.penanggung_jawab).filter(Boolean))];
+  const opsiKondisi = ["Baik", "Buruk", "Rusak"];
+  const opsiKelayakan = ["Layak", "Tidak Layak"];
+  const opsiStatus = ["Digunakan", "Disimpan", "Dipinjam", "Hilang"];
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -150,7 +154,7 @@ function ItemList() {
 
       {!token && (
         <p className="mb-4 text-red-600">
-          Anda belum login, fitur edit dan hapus tidak tersedia.
+          Selamat datang
         </p>
       )}
 
@@ -218,16 +222,43 @@ function ItemList() {
                 ].map((field) => (
                   <td key={field} className="py-2 px-4">
                     {editingId === item._id ? (
-                      <input
-                        type={field === "jumlah_unit" ? "number" : "text"}
-                        name={field}
-                        value={editedItem[field] || ""}
-                        onChange={handleChange}
-                        className="border px-2 py-1 w-full"
-                      />
-                    ) : (
-                      item[field]
-                    )}
+  field === "jumlah_unit" || field === "tahun_perolehan" ? (
+    <input
+      type="number"
+      name={field}
+      value={editedItem[field] || ""}
+      onChange={handleChange}
+      className="border px-2 py-1 w-full"
+    />
+  ) : ["kondisi", "kelayakan", "status", "penanggung_jawab"].includes(field) ? (
+    <select
+      name={field}
+      value={editedItem[field] || ""}
+      onChange={handleChange}
+      className="border px-2 py-1 w-full"
+    >
+      <option value="">-- Pilih --</option>
+      {(field === "kondisi" ? opsiKondisi :
+        field === "kelayakan" ? opsiKelayakan :
+        field === "status" ? opsiStatus :
+        opsiPenanggungJawab
+      ).map((opt) => (
+        <option key={opt} value={opt}>{opt}</option>
+      ))}
+    </select>
+  ) : (
+    <input
+      type="text"
+      name={field}
+      value={editedItem[field] || ""}
+      onChange={handleChange}
+      className="border px-2 py-1 w-full"
+    />
+  )
+) : (
+  item[field]
+)}
+
                   </td>
                 ))}
                 <td className="py-2 px-4 text-center">
