@@ -88,6 +88,7 @@ function ItemList() {
     setEditedItem({ ...editedItem, [e.target.name]: e.target.value });
   };
 
+  
   return (
     <div className="p-6">
       <div className="flex justify-between mb-4 flex-wrap gap-2">
@@ -164,6 +165,10 @@ function ItemList() {
               <th className="py-2 px-4 text-center">Kondisi</th>
               <th className="py-2 px-4 text-center">Kelayakan</th>
               <th className="py-2 px-4 text-center">Jumlah Unit</th>
+              <th className="py-2 px-4 text-center">Tahun Perolehan</th>
+              <th className="py-2 px-4 text-center">Sumber</th>
+              <th className="py-2 px-4 text-center">Status</th>
+              <th className="py-2 px-4 text-center">Keterangan</th>
               <th className="py-2 px-4 text-center">Penanggung Jawab</th>
               <th className="py-2 px-4 text-center">Gambar</th>
             </tr>
@@ -205,6 +210,10 @@ function ItemList() {
                   "kondisi",
                   "kelayakan",
                   "jumlah_unit",
+                  "tahun_perolehan",
+                  "sumber_perolehan",
+                  "status",
+                  "keterangan",
                   "penanggung_jawab",
                 ].map((field) => (
                   <td key={field} className="py-2 px-4">
