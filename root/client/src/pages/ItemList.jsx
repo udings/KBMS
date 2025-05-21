@@ -14,6 +14,9 @@ function ItemList() {
   const opsiKondisi = ["Baik", "Buruk", "Rusak"];
   const opsiKelayakan = ["Layak", "Tidak Layak"];
   const opsiStatus = ["Digunakan", "Disimpan", "Dipinjam", "Hilang"];
+  const [selectedKategori, setSelectedKategori] = useState("Semua");
+  const opsiKategori = ["Semua", ...new Set(items.map((item) => item.kategori).filter(Boolean))];
+
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -157,6 +160,22 @@ function ItemList() {
           Selamat datang
         </p>
       )}
+      
+      <div className="mb-4">
+  <label className="mr-2 font-semibold">Filter Kategori:</label>
+  <select
+    value={selectedKategori}
+    onChange={(e) => setSelectedKategori(e.target.value)}
+    className="border px-2 py-1 rounded"
+  >
+    {opsiKategori.map((kategori) => (
+      <option key={kategori} value={kategori}>
+        {kategori}
+      </option>
+    ))}
+  </select>
+</div>
+
 
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-200 rounded shadow-sm">
@@ -178,7 +197,9 @@ function ItemList() {
             </tr>
           </thead>
           <tbody>
-            {items.map((item) => (
+            {items
+              .filter(item => selectedKategori === "Semua" || item.kategori === selectedKategori)
+              .map((item) => (
               <tr key={item._id}>
                 <td className="py-2 px-4 text-center">
                   <div className="flex justify-center gap-2">

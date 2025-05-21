@@ -15,7 +15,7 @@ function Home() {
           onClick={() => navigate("/items")}
           className="w-32 h-10 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition"
         >
-          Pencet ini
+          Aset KBMS
         </button>
       </div>
     </div>
