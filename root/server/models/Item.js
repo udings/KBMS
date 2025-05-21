@@ -2,7 +2,22 @@
 
   const itemSchema = new mongoose.Schema({
     nama_aset: { type: String, required: true },
-    kategori: { type: String, required: true },
+     kategori: {
+    type: String,
+    required: true,
+    enum: [
+      'Kostum & Aksesoris',
+      'Alat Musik Tradisional',
+      'Properti Pertunjukkan',
+      'Peralatan Elektronik',
+      'Perlengkapan Panggung & Dekorasi',
+      'Dokumentasi & Arsip',
+      'Peralatan Latihan',
+      'Peralatan Administrasi',
+      'Peralatan Kerajinan & Seni Rupa',
+      'Alat Games'
+    ]
+  },
     lokasi: { type: String, required: true },
     tahun_perolehan: {
       type: Number,

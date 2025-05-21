@@ -106,9 +106,22 @@ await axios.post("https://kbms-production.up.railway.app/items", payload, {
         </div>
 
         <div>
-          <label className="block text-sm font-medium">Kategori *</label>
-          <input type="text" value={kategori} onChange={(e) => setKategori(e.target.value)} required className="w-full border p-2 rounded" />
-        </div>
+  <label className="block text-sm font-medium">Kategori *</label>
+  <select value={kategori} onChange={(e) => setKategori(e.target.value)} required className="w-full border p-2 rounded">
+    <option value="">-- Pilih Kategori --</option>
+    <option value="Kostum & Aksesoris">Kostum & Aksesoris</option>
+    <option value="Alat Musik Tradisional">Alat Musik Tradisional</option>
+    <option value="Properti Pertunjukkan">Properti Pertunjukkan</option>
+    <option value="Peralatan Elektronik">Peralatan Elektronik</option>
+    <option value="Perlengkapan Panggung & Dekorasi">Perlengkapan Panggung & Dekorasi</option>
+    <option value="Dokumentasi & Arsip">Dokumentasi & Arsip</option>
+    <option value="Peralatan Latihan">Peralatan Latihan</option>
+    <option value="Peralatan Administrasi">Peralatan Administrasi</option>
+    <option value="Peralatan Kerajinan & Seni Rupa">Peralatan Kerajinan & Seni Rupa</option>
+    <option value="Alat Games">Alat Games</option>
+  </select>
+</div>
+
 
         <div>
           <label className="block text-sm font-medium">Lokasi *</label>
