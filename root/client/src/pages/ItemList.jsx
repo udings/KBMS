@@ -20,6 +20,8 @@ function ItemList() {
   const opsiStatus = ["Digunakan", "Disimpan", "Dipinjam", "Hilang"];
   const opsiKategori = ["Semua", ...new Set(items.map((item) => item.kategori).filter(Boolean))];
 
+  const [selectedImage, setSelectedImage] = useState(null);
+
   const filteredItems = items.filter(item => selectedKategori === "Semua" || item.kategori === selectedKategori);
 
   useEffect(() => {
@@ -133,7 +135,7 @@ function ItemList() {
         </select>
       </div>
 
-      {/* Desktop Table */}
+      {/* Desktop */}
       <div className="overflow-x-auto hidden md:block">
         <table className="min-w-full bg-white border border-gray-200 rounded shadow-sm">
           <thead className="bg-blue-600 text-white">
@@ -194,29 +196,80 @@ function ItemList() {
         </table>
       </div>
 
-      {/* Mobile Cards */}
+      {/* Mobile */}
       <div className="md:hidden flex flex-col gap-4">
         {filteredItems.map((item) => (
           <div key={item._id} className="border p-4 rounded shadow-sm bg-white">
             <div className="flex justify-between mb-2">
               <h2 className="font-semibold text-lg">{item.nama_aset}</h2>
               <div className="flex gap-2">
-                {editMode && token && <button onClick={() => handleEditClick(item)} className="text-sm bg-yellow-400 text-white px-2 py-1 rounded">Edit</button>}
-                {deleteMode && token && <button onClick={() => handleDelete(item._id)} className="text-sm bg-red-400 text-white px-2 py-1 rounded">Delete</button>}
-              </div>
-            </div>
+                {editingId === item._id ? (
+            <>
+              <button onClick={handleSaveEdit} className="text-sm bg-green-500 text-white px-2 py-1 rounded">Simpan</button>
+              <button onClick={handleCancelEdit} className="text-sm bg-gray-400 text-white px-2 py-1 rounded">Batal</button>
+            </>
+          ) : (
+            <>
+              {editMode && token && (
+                <button onClick={() => handleEditClick(item)} className="text-sm bg-yellow-400 text-white px-2 py-1 rounded">Edit</button>
+              )}
+              {deleteMode && token && (
+                <button onClick={() => handleDelete(item._id)} className="text-sm bg-red-400 text-white px-2 py-1 rounded">Delete</button>
+              )}
+            </>
+          )}
+        </div>
+      </div>
             <div className="text-sm space-y-1">
-              <p><strong>Kategori:</strong> {item.kategori}</p>
-              <p><strong>Lokasi:</strong> {item.lokasi}</p>
-              <p><strong>Kondisi:</strong> {item.kondisi}</p>
-              <p><strong>Kelayakan:</strong> {item.kelayakan}</p>
-              <p><strong>Jumlah:</strong> {item.jumlah_unit}</p>
-              <p><strong>Tahun:</strong> {item.tahun_perolehan}</p>
-              <p><strong>Sumber:</strong> {item.sumber_perolehan}</p>
-              <p><strong>Status:</strong> {item.status}</p>
-              <p><strong>Keterangan:</strong> {item.keterangan}</p>
-              <p><strong>Penanggung Jawab:</strong> {item.penanggung_jawab}</p>
-            </div>
+  {["kategori", "lokasi", "kondisi", "kelayakan", "jumlah_unit", "tahun_perolehan", "sumber_perolehan", "status", "keterangan", "penanggung_jawab"].map((field) => (
+    <div key={field}>
+      <strong>{field.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase())}:</strong>{" "}
+      {editingId === item._id ? (
+        ["jumlah_unit", "tahun_perolehan"].includes(field) ? (
+          <input
+            type="number"
+            name={field}
+            value={editedItem[field] || ""}
+            onChange={handleChange}
+            className="border px-2 py-1 rounded w-full"
+          />
+        ) : ["kondisi", "kelayakan", "status", "penanggung_jawab"].includes(field) ? (
+          <select
+            name={field}
+            value={editedItem[field] || ""}
+            onChange={handleChange}
+            className="border px-2 py-1 rounded w-full"
+          >
+            <option value="">-- Pilih --</option>
+            {(field === "kondisi"
+              ? opsiKondisi
+              : field === "kelayakan"
+              ? opsiKelayakan
+              : field === "status"
+              ? opsiStatus
+              : opsiPenanggungJawab
+            ).map((opt) => (
+              <option key={opt} value={opt}>
+                {opt}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <input
+            type="text"
+            name={field}
+            value={editedItem[field] || ""}
+            onChange={handleChange}
+            className="border px-2 py-1 rounded w-full"
+          />
+        )
+      ) : (
+        item[field]
+      )}
+    </div>
+  ))}
+</div>
+
             {item.image && <img src={item.image} alt={item.nama_aset} className="w-full h-40 object-cover rounded mt-2" />}
           </div>
         ))}
