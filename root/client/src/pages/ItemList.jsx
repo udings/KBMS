@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 const API = process.env.REACT_APP_API_URL || "https://kbms-production.up.railway.app";
-console.log("✅ Loaded API URL:", API);
+console.log("\u2705 Loaded API URL:", API);
 
 function ItemList() {
   const [items, setItems] = useState([]);
@@ -10,14 +10,17 @@ function ItemList() {
   const [deleteMode, setDeleteMode] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [editedItem, setEditedItem] = useState({});
+  const [selectedKategori, setSelectedKategori] = useState("Semua");
+
+  const token = localStorage.getItem("token");
+
   const opsiPenanggungJawab = [...new Set(items.map((item) => item.penanggung_jawab).filter(Boolean))];
   const opsiKondisi = ["Baik", "Buruk", "Rusak"];
   const opsiKelayakan = ["Layak", "Tidak Layak"];
   const opsiStatus = ["Digunakan", "Disimpan", "Dipinjam", "Hilang"];
-  const [selectedKategori, setSelectedKategori] = useState("Semua");
   const opsiKategori = ["Semua", ...new Set(items.map((item) => item.kategori).filter(Boolean))];
 
-  const token = localStorage.getItem("token");
+  const filteredItems = items.filter(item => selectedKategori === "Semua" || item.kategori === selectedKategori);
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -26,8 +29,8 @@ function ItemList() {
         const res = await axios.get(`${API}/items`, { headers });
         setItems(res.data);
       } catch (err) {
-        console.error("❌ Gagal mengambil data barang:", err);
-        if (err.response && err.response.status === 401) {
+        console.error("\u274C Gagal mengambil data barang:", err);
+        if (err.response?.status === 401) {
           alert("Token tidak valid atau sesi telah berakhir. Silakan login ulang.");
         }
       }
@@ -48,8 +51,8 @@ function ItemList() {
       });
       setItems((prev) => prev.filter((item) => item._id !== id));
     } catch (err) {
-      console.error("❌ Gagal menghapus item:", err);
-      if (err.response && err.response.status === 401) {
+      console.error("\u274C Gagal menghapus item:", err);
+      if (err.response?.status === 401) {
         alert("Token tidak valid atau sesi telah berakhir. Silakan login ulang.");
       }
     }
@@ -81,11 +84,10 @@ function ItemList() {
       setItems((prev) =>
         prev.map((item) => (item._id === editingId ? res.data : item))
       );
-      setEditingId(null);
-      setEditedItem({});
+      handleCancelEdit();
     } catch (err) {
-      console.error("❌ Gagal menyimpan perubahan:", err);
-      if (err.response && err.response.status === 401) {
+      console.error("\u274C Gagal menyimpan perubahan:", err);
+      if (err.response?.status === 401) {
         alert("Token tidak valid atau sesi telah berakhir. Silakan login ulang.");
       }
     }
@@ -95,200 +97,93 @@ function ItemList() {
     setEditedItem({ ...editedItem, [e.target.name]: e.target.value });
   };
 
-  
   return (
-    <div className="p-6">
-      <div className="flex justify-between mb-4 flex-wrap gap-2">
+    <div className="p-4">
+      <div className="flex flex-wrap justify-between mb-4 gap-2">
         <h1 className="text-xl font-bold text-blue-600">In Stock</h1>
         <div className="space-x-2 flex flex-wrap">
-  <button onClick={() => (window.location.href = "/")} className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
-    Home
-  </button>
+          <button onClick={() => (window.location.href = "/")} className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Home</button>
 
-  {token && (
-    <>
-      <button onClick={() => (window.location.href = "/items/new")} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-        New Stock
-      </button>
-      <button
-        onClick={() => {
-          setEditMode((prev) => !prev);
-          setDeleteMode(false);
-          setEditingId(null);
-        }}
-        className={`${editMode ? "bg-yellow-500" : "bg-yellow-400"} text-white px-4 py-2 rounded hover:bg-yellow-600`}
-      >
-        {editMode ? "Exit Edit Mode" : "Edit Mode"}
-      </button>
-      <button
-        onClick={() => {
-          setDeleteMode((prev) => !prev);
-          setEditMode(false);
-          setEditingId(null);
-        }}
-        className={`${deleteMode ? "bg-red-500" : "bg-red-400"} text-white px-4 py-2 rounded hover:bg-red-600`}
-      >
-        {deleteMode ? "Exit Delete Mode" : "Delete Mode"}
-      </button>
-    </>
-  )}
+          {token && (
+            <>
+              <button onClick={() => (window.location.href = "/items/new")} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">New Stock</button>
+              <button onClick={() => { setEditMode((prev) => !prev); setDeleteMode(false); setEditingId(null); }} className={`${editMode ? "bg-yellow-500" : "bg-yellow-400"} text-white px-4 py-2 rounded hover:bg-yellow-600`}>
+                {editMode ? "Exit Edit Mode" : "Edit Mode"}
+              </button>
+              <button onClick={() => { setDeleteMode((prev) => !prev); setEditMode(false); setEditingId(null); }} className={`${deleteMode ? "bg-red-500" : "bg-red-400"} text-white px-4 py-2 rounded hover:bg-red-600`}>
+                {deleteMode ? "Exit Delete Mode" : "Delete Mode"}
+              </button>
+            </>
+          )}
 
-  {token ? (
-    <button
-      onClick={() => {
-        localStorage.removeItem("token");
-        window.location.reload();
-      }}
-      className="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-800"
-    >
-      Logout
-    </button>
-  ) : (
-    <button
-      onClick={() => (window.location.href = "/login")}
-      className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-    >
-      Login
-    </button>
-  )}
-</div>
-
+          {token ? (
+            <button onClick={() => { localStorage.removeItem("token"); window.location.reload(); }} className="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-800">Logout</button>
+          ) : (
+            <button onClick={() => (window.location.href = "/login")} className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Login</button>
+          )}
+        </div>
       </div>
 
-      {!token && (
-        <p className="mb-4 text-red-600">
-          Selamat datang
-        </p>
-      )}
-      
       <div className="mb-4">
-  <label className="mr-2 font-semibold">Filter Kategori:</label>
-  <select
-    value={selectedKategori}
-    onChange={(e) => setSelectedKategori(e.target.value)}
-    className="border px-2 py-1 rounded"
-  >
-    {opsiKategori.map((kategori) => (
-      <option key={kategori} value={kategori}>
-        {kategori}
-      </option>
-    ))}
-  </select>
-</div>
+        <label className="mr-2 font-semibold">Filter Kategori:</label>
+        <select value={selectedKategori} onChange={(e) => setSelectedKategori(e.target.value)} className="border px-2 py-1 rounded">
+          {opsiKategori.map((kategori) => (
+            <option key={kategori} value={kategori}>{kategori}</option>
+          ))}
+        </select>
+      </div>
 
-
-      <div className="overflow-x-auto">
+      {/* Desktop Table */}
+      <div className="overflow-x-auto hidden md:block">
         <table className="min-w-full bg-white border border-gray-200 rounded shadow-sm">
           <thead className="bg-blue-600 text-white">
             <tr>
-              <th className="py-2 px-4 text-center">Aksi</th>
-              <th className="py-2 px-4 text-center">Nama Barang</th>
-              <th className="py-2 px-4 text-center">Kategori</th>
-              <th className="py-2 px-4 text-center">Lokasi</th>
-              <th className="py-2 px-4 text-center">Kondisi</th>
-              <th className="py-2 px-4 text-center">Kelayakan</th>
-              <th className="py-2 px-4 text-center">Jumlah Unit</th>
-              <th className="py-2 px-4 text-center">Tahun Perolehan</th>
-              <th className="py-2 px-4 text-center">Sumber</th>
-              <th className="py-2 px-4 text-center">Status</th>
-              <th className="py-2 px-4 text-center">Keterangan</th>
-              <th className="py-2 px-4 text-center">Penanggung Jawab</th>
-              <th className="py-2 px-4 text-center">Gambar</th>
+              {["Aksi", "Nama Barang", "Kategori", "Lokasi", "Kondisi", "Kelayakan", "Jumlah Unit", "Tahun", "Sumber", "Status", "Keterangan", "Penanggung Jawab", "Gambar"].map((head) => (
+                <th key={head} className="py-2 px-4 text-center">{head}</th>
+              ))}
             </tr>
           </thead>
           <tbody>
-            {items
-              .filter(item => selectedKategori === "Semua" || item.kategori === selectedKategori)
-              .map((item) => (
+            {filteredItems.map((item) => (
               <tr key={item._id}>
                 <td className="py-2 px-4 text-center">
                   <div className="flex justify-center gap-2">
                     {editingId === item._id ? (
                       <>
-                        <button onClick={handleSaveEdit} className="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600">
-                          Simpan
-                        </button>
-                        <button onClick={handleCancelEdit} className="bg-gray-400 text-white px-2 py-1 rounded hover:bg-gray-500">
-                          Batal
-                        </button>
+                        <button onClick={handleSaveEdit} className="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600">Simpan</button>
+                        <button onClick={handleCancelEdit} className="bg-gray-400 text-white px-2 py-1 rounded hover:bg-gray-500">Batal</button>
                       </>
                     ) : (
                       <>
-                        {editMode && token && (
-                          <button onClick={() => handleEditClick(item)} className="bg-yellow-400 text-white px-2 py-1 rounded hover:bg-yellow-500">
-                            Edit
-                          </button>
-                        )}
-                        {deleteMode && token && (
-                          <button onClick={() => handleDelete(item._id)} className="bg-red-400 text-white px-2 py-1 rounded hover:bg-red-500">
-                            Delete
-                          </button>
-                        )}
+                        {editMode && token && <button onClick={() => handleEditClick(item)} className="bg-yellow-400 text-white px-2 py-1 rounded hover:bg-yellow-500">Edit</button>}
+                        {deleteMode && token && <button onClick={() => handleDelete(item._id)} className="bg-red-400 text-white px-2 py-1 rounded hover:bg-red-500">Delete</button>}
                       </>
                     )}
                   </div>
                 </td>
-                {[
-                  "nama_aset",
-                  "kategori",
-                  "lokasi",
-                  "kondisi",
-                  "kelayakan",
-                  "jumlah_unit",
-                  "tahun_perolehan",
-                  "sumber_perolehan",
-                  "status",
-                  "keterangan",
-                  "penanggung_jawab",
-                ].map((field) => (
-                  <td key={field} className="py-2 px-4">
+                {["nama_aset", "kategori", "lokasi", "kondisi", "kelayakan", "jumlah_unit", "tahun_perolehan", "sumber_perolehan", "status", "keterangan", "penanggung_jawab"].map((field) => (
+                  <td key={field} className="py-2 px-4 text-center">
                     {editingId === item._id ? (
-  field === "jumlah_unit" || field === "tahun_perolehan" ? (
-    <input
-      type="number"
-      name={field}
-      value={editedItem[field] || ""}
-      onChange={handleChange}
-      className="border px-2 py-1 w-full"
-    />
-  ) : ["kondisi", "kelayakan", "status", "penanggung_jawab"].includes(field) ? (
-    <select
-      name={field}
-      value={editedItem[field] || ""}
-      onChange={handleChange}
-      className="border px-2 py-1 w-full"
-    >
-      <option value="">-- Pilih --</option>
-      {(field === "kondisi" ? opsiKondisi :
-        field === "kelayakan" ? opsiKelayakan :
-        field === "status" ? opsiStatus :
-        opsiPenanggungJawab
-      ).map((opt) => (
-        <option key={opt} value={opt}>{opt}</option>
-      ))}
-    </select>
-  ) : (
-    <input
-      type="text"
-      name={field}
-      value={editedItem[field] || ""}
-      onChange={handleChange}
-      className="border px-2 py-1 w-full"
-    />
-  )
-) : (
-  item[field]
-)}
-
+                      field === "jumlah_unit" || field === "tahun_perolehan" ? (
+                        <input type="number" name={field} value={editedItem[field] || ""} onChange={handleChange} className="border px-2 py-1 w-full" />
+                      ) : ["kondisi", "kelayakan", "status", "penanggung_jawab"].includes(field) ? (
+                        <select name={field} value={editedItem[field] || ""} onChange={handleChange} className="border px-2 py-1 w-full">
+                          <option value="">-- Pilih --</option>
+                          {(field === "kondisi" ? opsiKondisi : field === "kelayakan" ? opsiKelayakan : field === "status" ? opsiStatus : opsiPenanggungJawab).map((opt) => (
+                            <option key={opt} value={opt}>{opt}</option>
+                          ))}
+                        </select>
+                      ) : (
+                        <input type="text" name={field} value={editedItem[field] || ""} onChange={handleChange} className="border px-2 py-1 w-full" />
+                      )
+                    ) : (
+                      item[field]
+                    )}
                   </td>
                 ))}
                 <td className="py-2 px-4 text-center">
                   {item.image ? (
-                    <img
-                      src={item.image}
-                      alt={item.nama_aset}
-                      className="w-16 h-16 object-cover rounded-lg mx-auto"
-                    />
+                    <img src={item.image} alt={item.nama_aset} className="w-16 h-16 object-cover rounded-lg mx-auto" />
                   ) : (
                     <p>No Image</p>
                   )}
@@ -297,6 +192,34 @@ function ItemList() {
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile Cards */}
+      <div className="md:hidden flex flex-col gap-4">
+        {filteredItems.map((item) => (
+          <div key={item._id} className="border p-4 rounded shadow-sm bg-white">
+            <div className="flex justify-between mb-2">
+              <h2 className="font-semibold text-lg">{item.nama_aset}</h2>
+              <div className="flex gap-2">
+                {editMode && token && <button onClick={() => handleEditClick(item)} className="text-sm bg-yellow-400 text-white px-2 py-1 rounded">Edit</button>}
+                {deleteMode && token && <button onClick={() => handleDelete(item._id)} className="text-sm bg-red-400 text-white px-2 py-1 rounded">Delete</button>}
+              </div>
+            </div>
+            <div className="text-sm space-y-1">
+              <p><strong>Kategori:</strong> {item.kategori}</p>
+              <p><strong>Lokasi:</strong> {item.lokasi}</p>
+              <p><strong>Kondisi:</strong> {item.kondisi}</p>
+              <p><strong>Kelayakan:</strong> {item.kelayakan}</p>
+              <p><strong>Jumlah:</strong> {item.jumlah_unit}</p>
+              <p><strong>Tahun:</strong> {item.tahun_perolehan}</p>
+              <p><strong>Sumber:</strong> {item.sumber_perolehan}</p>
+              <p><strong>Status:</strong> {item.status}</p>
+              <p><strong>Keterangan:</strong> {item.keterangan}</p>
+              <p><strong>Penanggung Jawab:</strong> {item.penanggung_jawab}</p>
+            </div>
+            {item.image && <img src={item.image} alt={item.nama_aset} className="w-full h-40 object-cover rounded mt-2" />}
+          </div>
+        ))}
       </div>
     </div>
   );
