@@ -24,14 +24,14 @@ function Home() {
 
         <button
           onClick={() => handleExternalLink("https://linktr.ee/namakamu")}
-          className="w-32 h-10 bg-green-600 text-white rounded-xl hover:bg-green-700 transition"
+          className="w-32 h-10 bg-indigo-600 text-white rounded-xl hover:bg-green-700 transition"
         >
           SOP INTERNAL
         </button>
 
         <button
           onClick={() => handleExternalLink("https://linktr.ee/namakamu")}
-          className="w-32 h-10 bg-pink-600 text-white rounded-xl hover:bg-pink-700 transition"
+          className="w-32 h-10 bg-indigo-600 text-white rounded-xl hover:bg-pink-700 transition"
         >
           SOP EKSTERNAL
         </button>
