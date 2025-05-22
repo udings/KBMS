@@ -194,12 +194,8 @@ function ItemList() {
                   </td>
                 ))}
                 <td className="py-2 px-4 text-center">
-                  {item.image && (
-                    <img
-                      src={item.image}
-                      alt={item.nama_aset}
-                      onClick={() => setSelectedImage(item.image)}
-                      className="w-full h-40 object-cover rounded mt-2 cursor-pointer hover:scale-105 transition"/>
+                  {item.image ? (
+                    <img src={item.image} alt={item.nama_aset} className="w-16 h-16 object-cover rounded-lg mx-auto" />
                   ) : (
                     <p>No Image</p>
                   )}
@@ -288,23 +284,6 @@ function ItemList() {
           </div>
         ))}
       </div>
-      {selectedImage && (
-  <div
-    className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
-    onClick={() => setSelectedImage(null)}
-  >
-    <div className="relative">
-      <img src={selectedImage} alt="Preview" className="max-w-full max-h-screen rounded-lg shadow-lg" />
-      <button
-        onClick={() => setSelectedImage(null)}
-        className="absolute top-2 right-2 bg-white text-black px-2 py-1 rounded-full shadow hover:bg-gray-200"
-      >
-        ✕
-      </button>
-    </div>
-  </div>
-)}
-
     </div>
   );
 }
