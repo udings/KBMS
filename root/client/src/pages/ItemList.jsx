@@ -292,18 +292,33 @@ function ItemList() {
         ))}
       </div>
       {selectedImage && (
-  <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 transition-opacity duration-300">
-    <div className="bg-white p-4 rounded shadow-lg max-w-3xl w-full relative">
+  <div
+    className="fixed inset-0 z-50 bg-black bg-opacity-75 flex items-center justify-center p-4"
+    onClick={() => setSelectedImage(null)} // klik di luar gambar akan menutup modal
+  >
+    <div
+      className="relative max-w-full max-h-full overflow-auto"
+      onClick={(e) => e.stopPropagation()} // mencegah penutupan modal saat klik gambar
+    >
+      {/* Tombol Close */}
       <button
         onClick={() => setSelectedImage(null)}
-        className="absolute top-2 right-2 text-gray-700 hover:text-black text-2xl font-bold"
+        className="absolute top-2 right-2 text-white bg-black bg-opacity-50 hover:bg-opacity-75 rounded-full p-2 z-50"
       >
-        &times;
+        ✕
       </button>
-      <img src={selectedImage} alt="Detail" className="w-full h-auto rounded" />
+
+      {/* Gambar */}
+      <img
+        src={selectedImage}
+        alt="Preview"
+        className="max-w-[90vw] max-h-[80vh] object-contain rounded"
+      />
     </div>
   </div>
 )}
+
+
     </div>
   );
 }
