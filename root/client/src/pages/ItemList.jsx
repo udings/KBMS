@@ -136,6 +136,7 @@ function ItemList() {
       </div>
 
       {/* Desktop */}
+      {/* Ini yang terbaru */}
       <div className="overflow-x-auto hidden md:block">
         <table className="min-w-full bg-white border border-gray-200 rounded shadow-sm">
           <thead className="bg-blue-600 text-white">
@@ -149,30 +150,24 @@ function ItemList() {
             {filteredItems.map((item) => (
               <tr key={item._id}>
                 <td className="py-2 px-4 text-center">
-                  {item.image ? (
-                    <img
-                      src={item.image}
-                      alt={item.nama_aset}
-                      onClick={() => setSelectedImage(item.image)}
-                      className="w-16 h-16 object-cover rounded-lg mx-auto cursor-pointer hover:scale-105 transition"
-                    />
-                    ) : (
-                        <p>No Image</p>
-                  )}
-                  <div className="flex justify-center gap-2">
-                    {editingId === item._id ? (
-                      <>
-                        <button onClick={handleSaveEdit} className="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600">Simpan</button>
-                        <button onClick={handleCancelEdit} className="bg-gray-400 text-white px-2 py-1 rounded hover:bg-gray-500">Batal</button>
-                      </>
-                    ) : (
-                      <>
-                        {editMode && token && <button onClick={() => handleEditClick(item)} className="bg-yellow-400 text-white px-2 py-1 rounded hover:bg-yellow-500">Edit</button>}
-                        {deleteMode && token && <button onClick={() => handleDelete(item._id)} className="bg-red-400 text-white px-2 py-1 rounded hover:bg-red-500">Delete</button>}
-                      </>
-                    )}
-                  </div>
-                </td>
+  <div className="flex justify-center gap-2">
+    {editingId === item._id ? (
+      <>
+        <button onClick={handleSaveEdit} className="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600">Simpan</button>
+        <button onClick={handleCancelEdit} className="bg-gray-400 text-white px-2 py-1 rounded hover:bg-gray-500">Batal</button>
+      </>
+    ) : (
+      <>
+        {editMode && token && (
+          <button onClick={() => handleEditClick(item)} className="bg-yellow-400 text-white px-2 py-1 rounded hover:bg-yellow-500">Edit</button>
+        )}
+        {deleteMode && token && (
+          <button onClick={() => handleDelete(item._id)} className="bg-red-400 text-white px-2 py-1 rounded hover:bg-red-500">Delete</button>
+        )}
+      </>
+    )}
+  </div>
+</td>
                 {["nama_aset", "kategori", "lokasi", "kondisi", "kelayakan", "jumlah_unit", "tahun_perolehan", "sumber_perolehan", "status", "keterangan", "penanggung_jawab"].map((field) => (
                   <td key={field} className="py-2 px-4 text-center">
                     {editingId === item._id ? (
