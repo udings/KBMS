@@ -279,7 +279,15 @@ function ItemList() {
   ))}
 </div>
 
-            {item.image && <img src={item.image} alt={item.nama_aset} className="w-full h-40 object-cover rounded mt-2" />}
+            {item.image && (
+  <img
+    src={item.image}
+    alt={item.nama_aset}
+    onClick={() => setSelectedImage(item.image)}
+    className="w-full h-32 object-cover rounded mt-2 cursor-pointer hover:scale-105 transition"
+  />
+)}
+
           </div>
         ))}
       </div>
