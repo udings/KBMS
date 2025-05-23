@@ -149,21 +149,30 @@ function ItemList() {
             {filteredItems.map((item) => (
               <tr key={item._id}>
                 <td className="py-2 px-4 text-center">
-  <div className="flex justify-center gap-2">
-    {editingId === item._id ? (
-      <>
-        <button onClick={handleSaveEdit} className="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600">Simpan</button>
-        <button onClick={handleCancelEdit} className="bg-gray-400 text-white px-2 py-1 rounded hover:bg-gray-500">Batal</button>
-      </>
-    ) : (
-      <>
-        {editMode && token && <button onClick={() => handleEditClick(item)} className="bg-yellow-400 text-white px-2 py-1 rounded hover:bg-yellow-500">Edit</button>}
-        {deleteMode && token && <button onClick={() => handleDelete(item._id)} className="bg-red-400 text-white px-2 py-1 rounded hover:bg-red-500">Delete</button>}
-      </>
-    )}
-  </div>
-</td>
-
+                  {item.image ? (
+                    <img
+                      src={item.image}
+                      alt={item.nama_aset}
+                      onClick={() => setSelectedImage(item.image)}
+                      className="w-16 h-16 object-cover rounded-lg mx-auto cursor-pointer hover:scale-105 transition"
+                    />
+                    ) : (
+                        <p>No Image</p>
+                  )}
+                  <div className="flex justify-center gap-2">
+                    {editingId === item._id ? (
+                      <>
+                        <button onClick={handleSaveEdit} className="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600">Simpan</button>
+                        <button onClick={handleCancelEdit} className="bg-gray-400 text-white px-2 py-1 rounded hover:bg-gray-500">Batal</button>
+                      </>
+                    ) : (
+                      <>
+                        {editMode && token && <button onClick={() => handleEditClick(item)} className="bg-yellow-400 text-white px-2 py-1 rounded hover:bg-yellow-500">Edit</button>}
+                        {deleteMode && token && <button onClick={() => handleDelete(item._id)} className="bg-red-400 text-white px-2 py-1 rounded hover:bg-red-500">Delete</button>}
+                      </>
+                    )}
+                  </div>
+                </td>
                 {["nama_aset", "kategori", "lokasi", "kondisi", "kelayakan", "jumlah_unit", "tahun_perolehan", "sumber_perolehan", "status", "keterangan", "penanggung_jawab"].map((field) => (
                   <td key={field} className="py-2 px-4 text-center">
                     {editingId === item._id ? (
@@ -279,23 +288,6 @@ function ItemList() {
           </div>
         ))}
       </div>
-      {selectedImage && (
-  <div
-    className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
-    onClick={() => setSelectedImage(null)}
-  >
-    <div className="relative max-w-4xl w-full mx-4" onClick={(e) => e.stopPropagation()}>
-      <button
-        onClick={() => setSelectedImage(null)}
-        className="absolute top-2 right-2 text-white bg-black bg-opacity-50 hover:bg-opacity-75 rounded-full p-1"
-      >
-        ✖
-      </button>
-      <img src={selectedImage} alt="Full" className="w-full h-auto rounded shadow-lg" />
-    </div>
-  </div>
-)}
-
     </div>
   );
 }
