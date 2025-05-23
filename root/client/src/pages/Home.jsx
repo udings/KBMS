@@ -23,17 +23,10 @@ function Home() {
         </button>
 
         <button
-          onClick={() => handleExternalLink("https://linktr.ee/namakamu")}
+          onClick={() => handleExternalLink("https://linktr.ee/kbms_diaspora2025")}
           className="w-32 h-10 bg-indigo-600 text-white rounded-xl hover:bg-green-700 transition"
         >
-          SOP INTERNAL
-        </button>
-
-        <button
-          onClick={() => handleExternalLink("https://linktr.ee/namakamu")}
-          className="w-32 h-10 bg-indigo-600 text-white rounded-xl hover:bg-pink-700 transition"
-        >
-          SOP EKSTERNAL
+          LINKTREE KBMS
         </button>
 
       </div>
