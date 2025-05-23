@@ -26,7 +26,7 @@ function Home() {
           onClick={() => handleExternalLink("https://linktr.ee/kbms_diaspora2025")}
           className="w-32 h-10 bg-indigo-600 text-white rounded-xl hover:bg-green-700 transition"
         >
-          Linktree KBMS Diaspora
+          Linktree KBMS
         </button>
 
       </div>
